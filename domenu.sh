@@ -1,0 +1,1 @@
+python3 /Users/johnf/Documents/Haverford/Projects/Menu/getmealinfo.py;
