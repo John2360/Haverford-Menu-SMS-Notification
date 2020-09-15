@@ -13,7 +13,7 @@ load_dotenv()
 import os
 SECRET_KEY = os.getenv("EMAIL")
 EMAIL_LIST = os.getenv("EMAIL_LIST").split(",")
-my_email = os.getenv("MYEMAIL").split(",")
+my_email = os.getenv("MYEMAIL")
 
 def is_time_between(begin_time, end_time, check_time=None):
     # If check time is not given, default to current UTC time
@@ -106,7 +106,7 @@ elif is_time_between(time(11,00), time(12,00)):
     send_text(msg, EMAIL_LIST, SECRET_KEY)
 elif is_time_between(time(17,00), time(18,00)):
     count = 1
-    msg = """\Dinner: """
+    msg = """\nDinner: """
     for item in menuinfo[date]["dinner"]:
         if count == len(menuinfo[date]["dinner"]):
             msg = msg + "and " + str(item)
