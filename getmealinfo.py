@@ -79,40 +79,41 @@ def get_today_menu():
 
 menuinfo = load_obj("menu-info")
 date = datetime.today().strftime('%Y-%m-%d')
-if len(menuinfo[date]) > 0:
-    #do magic
-    if is_time_between(time(7,00), time(8,00)):
-        count = 1
-        msg = """\Breakfast: """
-        for item in menuinfo[date]["breakfast"]:
-            if count == len(menuinfo[date]["breakfast"]):
-                msg = msg + "and " + str(item)
-            else:
-                msg = msg + str(item) + ", "
-            count += 1
-        send_text(msg, EMAIL_LIST, SECRET_KEY)
-    elif is_time_between(time(11,00), time(12,00)):
-        count = 1
-        msg = """\nLunch: """
-        for item in menuinfo[date]["lunch"]:
-            if count == len(menuinfo[date]["lunch"]):
-                msg = msg + "and " + str(item)
-            else:
-                msg = msg + str(item) + ", "
-            count += 1
-        send_text(msg, EMAIL_LIST, SECRET_KEY)
-    elif is_time_between(time(17,00), time(18,00)):
-        count = 1
-        msg = """\Dinner: """
-        for item in menuinfo[date]["dinner"]:
-            if count == len(menuinfo[date]["dinner"]):
-                msg = msg + "and " + str(item)
-            else:
-                msg = msg + str(item) + ", "
-            count += 1
-        send_text(msg, EMAIL_LIST, SECRET_KEY)
-    else:
-        # send dinner
-        print("Nothing")
-else:
+
+if len(menuinfo[date]) == 0:
     get_today_menu()
+
+#do magic
+if is_time_between(time(7,00), time(8,00)):
+    count = 1
+    msg = """\Breakfast: """
+    for item in menuinfo[date]["breakfast"]:
+        if count == len(menuinfo[date]["breakfast"]):
+            msg = msg + "and " + str(item)
+        else:
+            msg = msg + str(item) + ", "
+        count += 1
+    send_text(msg, EMAIL_LIST, SECRET_KEY)
+elif is_time_between(time(11,00), time(12,00)):
+    count = 1
+    msg = """\nLunch: """
+    for item in menuinfo[date]["lunch"]:
+        if count == len(menuinfo[date]["lunch"]):
+            msg = msg + "and " + str(item)
+        else:
+            msg = msg + str(item) + ", "
+        count += 1
+    send_text(msg, EMAIL_LIST, SECRET_KEY)
+elif is_time_between(time(17,00), time(18,00)):
+    count = 1
+    msg = """\Dinner: """
+    for item in menuinfo[date]["dinner"]:
+        if count == len(menuinfo[date]["dinner"]):
+            msg = msg + "and " + str(item)
+        else:
+            msg = msg + str(item) + ", "
+        count += 1
+    send_text(msg, EMAIL_LIST, SECRET_KEY)
+else:
+    # send dinner
+    print("Nothing")
