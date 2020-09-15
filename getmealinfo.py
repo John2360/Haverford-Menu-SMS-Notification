@@ -13,7 +13,7 @@ load_dotenv()
 import os
 SECRET_KEY = os.getenv("EMAIL")
 EMAIL_LIST = os.getenv("EMAIL_LIST").split(",")
-my_email = os.getenv("MY_EMAIL").split(",")
+my_email = os.getenv("MYEMAIL").split(",")
 
 def is_time_between(begin_time, end_time, check_time=None):
     # If check time is not given, default to current UTC time
