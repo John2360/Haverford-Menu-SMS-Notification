@@ -10,6 +10,9 @@ import smtplib, ssl
 from dotenv import load_dotenv
 load_dotenv()
 
+import schedule
+import time as tm
+
 import os
 SECRET_KEY = os.getenv("EMAIL")
 EMAIL_LIST = os.getenv("EMAIL_LIST").split(",")
@@ -77,43 +80,56 @@ def get_today_menu():
 
     save_obj(todaymeal, "menu-info")
 
-menuinfo = load_obj("menu-info")
-date = datetime.today().strftime('%Y-%m-%d')
+def main():
+    menuinfo = load_obj("menu-info")
+    date = datetime.today().strftime('%Y-%m-%d')
 
-if len(menuinfo[date]) == 0:
-    get_today_menu()
+    try:
+        if len(menuinfo[date]) == 0:
+            get_today_menu()
+    except:
+        get_today_menu()
 
-#do magic
-if is_time_between(time(7,00), time(8,00)):
-    count = 1
-    msg = """\Breakfast: """
-    for item in menuinfo[date]["breakfast"]:
-        if count == len(menuinfo[date]["breakfast"]):
-            msg = msg + "and " + str(item)
-        else:
-            msg = msg + str(item) + ", "
-        count += 1
-    send_text(msg, EMAIL_LIST, SECRET_KEY)
-elif is_time_between(time(11,00), time(12,00)):
-    count = 1
-    msg = """\nLunch: """
-    for item in menuinfo[date]["lunch"]:
-        if count == len(menuinfo[date]["lunch"]):
-            msg = msg + "and " + str(item)
-        else:
-            msg = msg + str(item) + ", "
-        count += 1
-    send_text(msg, EMAIL_LIST, SECRET_KEY)
-elif is_time_between(time(17,00), time(18,00)):
-    count = 1
-    msg = """\nDinner: """
-    for item in menuinfo[date]["dinner"]:
-        if count == len(menuinfo[date]["dinner"]):
-            msg = msg + "and " + str(item)
-        else:
-            msg = msg + str(item) + ", "
-        count += 1
-    send_text(msg, EMAIL_LIST, SECRET_KEY)
-else:
-    # send dinner
-    print("Nothing")
+    #do magic
+    if is_time_between(time(7,00), time(8,00)):
+        count = 1
+        msg = """\nBreakfast: """
+        for item in menuinfo[date]["breakfast"]:
+            if count == len(menuinfo[date]["breakfast"]):
+                msg = msg + "and " + str(item)
+            else:
+                msg = msg + str(item) + ", "
+            count += 1
+        send_text(msg, EMAIL_LIST, SECRET_KEY)
+    elif is_time_between(time(11,00), time(12,00)):
+        count = 1
+        msg = """\nLunch: """
+        for item in menuinfo[date]["lunch"]:
+            if count == len(menuinfo[date]["lunch"]):
+                msg = msg + "and " + str(item)
+            else:
+                msg = msg + str(item) + ", "
+            count += 1
+        send_text(msg, EMAIL_LIST, SECRET_KEY)
+    elif is_time_between(time(17,00), time(18,00)):
+        count = 1
+        msg = """\nDinner: """
+        for item in menuinfo[date]["dinner"]:
+            if count == len(menuinfo[date]["dinner"]):
+                msg = msg + "and " + str(item)
+            else:
+                msg = msg + str(item) + ", "
+            count += 1
+        send_text(msg, EMAIL_LIST, SECRET_KEY)
+    else:
+        # send dinner
+        print("Nothing")
+        # send_text("\nSubject new message!",EMAIL_LIST,SECRET_KEY)
+
+    print("I ran")
+
+schedule.every().hour.at(":01").do(main)
+
+while True:
+    schedule.run_pending()
+    tm.sleep(1)
