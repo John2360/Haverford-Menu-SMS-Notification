@@ -81,14 +81,18 @@ def get_today_menu():
     save_obj(todaymeal, "menu-info")
 
 def main():
-    menuinfo = load_obj("menu-info")
-    date = datetime.today().strftime('%Y-%m-%d')
-
+    get_today_menu()
     try:
+        menuinfo = load_obj("menu-info")
+        print(menuinfo)
+        date = datetime.today().strftime('%Y-%m-%d')
+
         if len(menuinfo[date]) == 0:
             get_today_menu()
     except:
         get_today_menu()
+        menuinfo = load_obj("menu-info")
+        date = datetime.today().strftime('%Y-%m-%d')
 
     #do magic
     if is_time_between(time(7,00), time(8,00)):
@@ -125,8 +129,6 @@ def main():
         # send dinner
         print("Nothing")
         # send_text("\nSubject new message!",EMAIL_LIST,SECRET_KEY)
-
-    print("I ran")
 
 schedule.every().hour.at(":01").do(main)
 
