@@ -62,6 +62,7 @@ def send_text(message,tolist,password):
         server.sendmail( 'Haverford Menu', to, message )
 
 def get_today_menu():
+    open('./obj/menu-info.pkl', 'w').close()
     driver = webdriver.Chrome('/Users/johnf/Documents/Haverford/Projects/Menu/chromedriver')  # Optional argument, if not specified will search path.
 
     driver.get('https://www.haverford.edu/dining-services/dining-center')
