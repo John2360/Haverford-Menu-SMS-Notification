@@ -15,7 +15,6 @@ import time as tm
 
 import os
 SECRET_KEY = os.getenv("EMAIL")
-EMAIL_LIST = os.getenv("EMAIL_LIST").split(",")
 my_email = os.getenv("MYEMAIL")
 
 def is_time_between(begin_time, end_time, check_time=None):
@@ -82,6 +81,7 @@ def get_today_menu():
     save_obj(todaymeal, "menu-info")
 
 def main():
+    EMAIL_LIST = os.getenv("EMAIL_LIST").split(",")
     get_today_menu()
     try:
         menuinfo = load_obj("menu-info")
