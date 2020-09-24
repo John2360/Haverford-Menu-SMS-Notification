@@ -1,5 +1,6 @@
 import time
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import re
 import pickle
 from datetime import datetime
@@ -62,6 +63,8 @@ def send_text(message,tolist,password):
 
 def get_today_menu():
     open('./obj/menu-info.pkl', 'w').close()
+    chrome_options = Options()  
+    chrome_options.add_argument("--headless")  
     driver = webdriver.Chrome('/Users/johnf/Documents/Haverford/Projects/Menu/chromedriver')  # Optional argument, if not specified will search path.
 
     driver.get('https://www.haverford.edu/dining-services/dining-center')
