@@ -61,6 +61,48 @@ def send_text(message,tolist,password):
         # Send text message through SMS gateway of destination number
         server.sendmail( 'Haverford Menu', to, message )
 
+def getmenu_new():
+    chrome_options = Options()  
+    chrome_options.add_argument("--headless")  
+    driver = webdriver.Chrome('/Users/johnf/Documents/Haverford/Projects/Menu/chromedriver', options=chrome_options)  # Optional argument, if not specified will search path.
+
+    driver.get('https://www.haverford.edu/dining-services/dining-center')
+    
+    try:
+        mealone = driver.find_elements_by_xpath('//*[@id="today_menu_1"]/div[1]')
+        mealtwo = driver.find_elements_by_xpath('//*[@id="today_menu_1"]/div[2]')
+        mealthree = driver.find_elements_by_xpath('//*[@id="today_menu_1"]/div[3]')
+    except:
+        mealone = driver.find_elements_by_xpath('//*[@id="today_menu_1"]/div[1]')
+        mealtwo = driver.find_elements_by_xpath('//*[@id="today_menu_1"]/div[2]')
+
+    menudict = {}
+
+    for meal in [mealone, mealtwo, mealthree]:
+
+        for element in meal:
+            mealinfo = element.text.replace("*", "")
+            mealinfo = mealinfo.splitlines()
+            text = mealinfo
+
+        i = 0
+        mealtype = ""
+        for smalltext in text:
+            if i == 0:
+                mealtype = smalltext
+            if not smalltext or smalltext == "Add to calendar" or i == 0:
+                text.remove(smalltext)
+            i += 1
+
+        menudict[mealtype] = text
+    
+    return menudict
+
+def get_today_menu_new():
+    open('./obj/menu-info.pkl', 'w').close()
+    date = datetime.today().strftime('%Y-%m-%d')
+    save_obj({date: getmenu_new()}, "menu-info")
+
 def get_today_menu():
     open('./obj/menu-info.pkl', 'w').close()
     chrome_options = Options()  
@@ -85,50 +127,75 @@ def get_today_menu():
 
 def main():
     EMAIL_LIST = os.getenv("EMAIL_LIST").split(",")
-    get_today_menu()
+    get_today_menu_new()
     try:
         menuinfo = load_obj("menu-info")
         print(menuinfo)
         date = datetime.today().strftime('%Y-%m-%d')
 
         if len(menuinfo[date]) == 0:
-            get_today_menu()
+            get_today_menu_new()
     except:
         get_today_menu()
         menuinfo = load_obj("menu-info")
         date = datetime.today().strftime('%Y-%m-%d')
 
     #do magic
-    if is_time_between(time(7,00), time(8,00)):
-        count = 1
-        msg = """\nBreakfast: """
-        for item in menuinfo[date]["breakfast"]:
-            if count == len(menuinfo[date]["breakfast"]):
-                msg = msg + "and " + str(item)
-            else:
-                msg = msg + str(item) + ", "
-            count += 1
-        send_text(msg, EMAIL_LIST, SECRET_KEY)
-    elif is_time_between(time(11,00), time(12,00)):
-        count = 1
-        msg = """\nLunch: """
-        for item in menuinfo[date]["lunch"]:
-            if count == len(menuinfo[date]["lunch"]):
-                msg = msg + "and " + str(item)
-            else:
-                msg = msg + str(item) + ", "
-            count += 1
-        send_text(msg, EMAIL_LIST, SECRET_KEY)
-    elif is_time_between(time(17,00), time(18,00)):
-        count = 1
-        msg = """\nDinner: """
-        for item in menuinfo[date]["dinner"]:
-            if count == len(menuinfo[date]["dinner"]):
-                msg = msg + "and " + str(item)
-            else:
-                msg = msg + str(item) + ", "
-            count += 1
-        send_text(msg, EMAIL_LIST, SECRET_KEY)
+    menuinfo = load_obj("menu-info")
+    date = datetime.today().strftime('%Y-%m-%d')
+
+    if len(menuinfo[date]) == 3:
+        if is_time_between(time(7,00), time(8,00)):
+            count = 1
+            msg = """\nBreakfast: """
+            for item in menuinfo[date]["Breakfast"]:
+                if count == len(menuinfo[date]["Breakfast"]):
+                    msg = msg + "and " + str(item)
+                else:
+                    msg = msg + str(item) + ", "
+                count += 1
+            send_text(msg, EMAIL_LIST, SECRET_KEY)
+        elif is_time_between(time(11,00), time(12,00)):
+            count = 1
+            msg = """\nLunch: """
+            for item in menuinfo[date]["Lunch"]:
+                if count == len(menuinfo[date]["Lunch"]):
+                    msg = msg + "and " + str(item)
+                else:
+                    msg = msg + str(item) + ", "
+                count += 1
+            send_text(msg, EMAIL_LIST, SECRET_KEY)
+        elif is_time_between(time(17,00), time(18,00)):
+            count = 1
+            msg = """\nDinner: """
+            for item in menuinfo[date]["Dinner"]:
+                if count == len(menuinfo[date]["Dinner"]):
+                    msg = msg + "and " + str(item)
+                else:
+                    msg = msg + str(item) + ", "
+                count += 1
+            send_text(msg, EMAIL_LIST, SECRET_KEY)
+    elif len(menuinfo[date]) == 2:
+        if is_time_between(time(7,00), time(8,00)):
+            count = 1
+            msg = """\Brunch: """
+            for item in menuinfo[date]["Brunch"]:
+                if count == len(menuinfo[date]["Brunch"]):
+                    msg = msg + "and " + str(item)
+                else:
+                    msg = msg + str(item) + ", "
+                count += 1
+            send_text(msg, EMAIL_LIST, SECRET_KEY)
+        elif is_time_between(time(11,00), time(12,00)):
+            count = 1
+            msg = """\Dinner: """
+            for item in menuinfo[date]["Dinner"]:
+                if count == len(menuinfo[date]["Dinner"]):
+                    msg = msg + "and " + str(item)
+                else:
+                    msg = msg + str(item) + ", "
+                count += 1
+            send_text(msg, EMAIL_LIST, SECRET_KEY)
     else:
         # send dinner
         print("Nothing")
